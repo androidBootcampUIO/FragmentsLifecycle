@@ -10,18 +10,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.Random;
+
 public class MainActivity extends AppCompatActivity implements
         FirstFragment.OnFirstFragmentInteractionListener,
         SecondFragment.OnSecondFragmentInteractionListener {
 
     private TextView lifecycleLogTextView;
 
+    private boolean isFirstFragmentSelected = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FirstFragment firstFragment = FirstFragment.newInstance("Some parameter");
+        FirstFragment firstFragment = FirstFragment.newInstance("first: " + getRandomInt());
         showFragment(firstFragment, null);
 
         lifecycleLogTextView = (TextView) findViewById(R.id.text_view_lifecycle_log_activity);
@@ -30,11 +34,24 @@ public class MainActivity extends AppCompatActivity implements
         changeFragmentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SecondFragment secondFragment = SecondFragment.newInstance("Hello");
-                showFragment(secondFragment, "second");
+                if (isFirstFragmentSelected) {
+                    SecondFragment secondFragment = SecondFragment.newInstance("second: " + getRandomInt());
+                    showFragment(secondFragment, "second");
+                    isFirstFragmentSelected = false;
+                } else {
+                    FirstFragment firstFragment = FirstFragment.newInstance("first: " + getRandomInt());
+                    showFragment(firstFragment, null);
+                    isFirstFragmentSelected = true;
+                }
             }
         });
     }
+
+    private int getRandomInt() {
+        Random rand = new Random();
+        return rand.nextInt();
+    }
+
 
     private void showFragment(Fragment fragment, String tag) {
         FragmentManager fragmentManager = this.getSupportFragmentManager();
